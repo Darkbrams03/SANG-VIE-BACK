@@ -13,8 +13,7 @@ return new class extends Migration
         if (!Schema::hasColumn('donors', 'status')) {
             $table->enum('status', ['pending', 'verified', 'deferred'])->default('pending')->after('city');
         }
-        // Ajout de la date du dernier don
-        $table->date('last_donation_date')->nullable()->after('status');
+       
     });
 }
 
