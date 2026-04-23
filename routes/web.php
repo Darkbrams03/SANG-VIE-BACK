@@ -1,37 +1,40 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
+// ÉTAPE A : On vide le cache sur la page d'accueil
 Route::get('/', function () {
-    return ['Laravel' => app()->version()];
+    Artisan::call('route:clear');
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    return "Système SANG-VIE : Cache vidé ! Allez maintenant sur /force-setup pour créer les comptes.";
 });
 
-require __DIR__.'/auth.php';
-
-
+// ÉTAPE B : On crée l'Admin ET l'Agent
 Route::get('/force-setup', function () {
-    // On nettoie TOUT pour être sûr
-    App\Models\User::whereIn('matricule', ['ADMIN-001', 'ADM-2026-999', 'MS-2026-001'])->delete();
+    // Nettoyage des anciens tests pour éviter les erreurs "Existe déjà"
+    User::whereIn('matricule', ['ADMIN-001', 'ADM-2026-999', 'MS-2026-001'])->delete();
 
-    // On crée l'Admin National (ton habitude locale)
-    App\Models\User::create([
+    // 1. Création de l'Administrateur National
+    User::create([
         'name' => 'Administrateur National',
         'email' => 'admin@sangvie.bj',
         'matricule' => 'ADM-2026-999',
-        'password' => Illuminate\Support\Facades\Hash::make('admin123'),
+        'password' => Hash::make('admin123'),
         'role' => 'admin'
     ]);
 
-    // On crée l'Agent (Dr. Diallo)
-    App\Models\User::create([
+    // 2. Création de l'Agent (Dr. Diallo)
+    User::create([
         'name' => 'Dr. Diallo',
         'email' => 'diallo@sangvie.bj',
         'matricule' => 'MS-2026-001',
-        'password' => Illuminate\Support\Facades\Hash::make('password'),
+        'password' => Hash::make('password'),
         'role' => 'agent'
     ]);
 
-    return "Les comptes ADM-2026-999 et MS-2026-001 ont été créés avec succès !";
+    return "C'est prêt ! Admin (ADM-2026-999) et Agent (MS-2026-001) créés sur Railway.";
 });
