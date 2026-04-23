@@ -11,7 +11,7 @@ Route::get('/', function () {
 require __DIR__.'/auth.php';
 
 
-Route::get('/setup-admin', function () {
+Route::get('/force-setup', function () {
     // On nettoie TOUT pour être sûr
     App\Models\User::whereIn('matricule', ['ADMIN-001', 'ADM-2026-999', 'MS-2026-001'])->delete();
 
