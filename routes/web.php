@@ -12,26 +12,26 @@ require __DIR__.'/auth.php';
 
 
 Route::get('/setup-admin', function () {
-    // Nettoyage pour repartir sur de bonnes bases
-    User::whereIn('matricule', ['ADM-2026-999', 'MS-2026-001'])->delete();
+    // On nettoie TOUT pour être sûr
+    App\Models\User::whereIn('matricule', ['ADMIN-001', 'ADM-2026-999', 'MS-2026-001'])->delete();
 
-    // 1. Création de l'Administrateur National
-    User::create([
+    // On crée l'Admin National (ton habitude locale)
+    App\Models\User::create([
         'name' => 'Administrateur National',
         'email' => 'admin@sangvie.bj',
         'matricule' => 'ADM-2026-999',
-        'password' => Hash::make('admin123'),
+        'password' => Illuminate\Support\Facades\Hash::make('admin123'),
         'role' => 'admin'
     ]);
 
-    // 2. Création de l'Agent de Santé (Dr. Diallo)
-    User::create([
+    // On crée l'Agent (Dr. Diallo)
+    App\Models\User::create([
         'name' => 'Dr. Diallo',
         'email' => 'diallo@sangvie.bj',
         'matricule' => 'MS-2026-001',
-        'password' => Hash::make('password'),
+        'password' => Illuminate\Support\Facades\Hash::make('password'),
         'role' => 'agent'
     ]);
 
-    return "Succès : L'Admin (ADM-2026-999) et l'Agent (MS-2026-001) sont prêts sur Railway !";
+    return "Les comptes ADM-2026-999 et MS-2026-001 ont été créés avec succès !";
 });
