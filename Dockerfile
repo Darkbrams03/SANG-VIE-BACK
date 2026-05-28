@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# 1. Installation des dépendances système et des extensions PHP nécessaires pour Laravel
+# 1. Installation des dépendances système et des extensions PHP requises (y compris PostgreSQL)
 RUN apt-get update && apt-get install -y \
     zip \
     unzip \
@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+    libpq-dev \
+    && docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd
 
 # 2. Activation du module de réécriture d'Apache (indispensable pour les routes Laravel)
 RUN a2enmod headers rewrite
@@ -29,7 +30,7 @@ RUN composer install --no-dev --optimize-autoloader
 # 6. Attribution des bonnes permissions pour les dossiers de cache et de stockage de Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Exécuter les migrations automatiquement avant de lancer le serveur
+# 7. Exécuter les migrations automatiquement avant de lancer le serveur
 CMD php artisan migrate --force && apache2-foreground
 
 EXPOSE 80
