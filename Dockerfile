@@ -29,4 +29,7 @@ RUN composer install --no-dev --optimize-autoloader
 # 6. Attribution des bonnes permissions pour les dossiers de cache et de stockage de Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Exécuter les migrations automatiquement avant de lancer le serveur
+CMD php artisan migrate --force && apache2-foreground
+
 EXPOSE 80
