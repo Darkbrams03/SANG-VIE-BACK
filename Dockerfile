@@ -31,6 +31,6 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 # 7. Exécuter les migrations automatiquement avant de lancer le serveur
-CMD php artisan migrate --force && apache2-foreground
+CMD php artisan config:clear && php artisan route:clear && php artisan migrate --force && apache2-foreground
 
 EXPOSE 80
