@@ -19,7 +19,7 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 
-# 🔥 AJOUT CRUCIAL : Forcer Apache à accepter les règles de redirection de Laravel
+# Forcer Apache à accepter les règles de redirection de Laravel
 RUN echo '<Directory /var/www/html/public>\n\
     Options Indexes FollowSymLinks\n\
     AllowOverride All\n\
@@ -37,7 +37,7 @@ RUN composer install --no-dev --optimize-autoloader
 # 6. Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# 7. Nettoyage des caches au démarrage
-CMD php artisan config:clear && php artisan route:clear && php artisan cache:clear && php artisan migrate --force && apache2-foreground
+# 7. Uniquement la migration au démarrage
+CMD php artisan migrate --force && apache2-foreground
 
 EXPOSE 80
