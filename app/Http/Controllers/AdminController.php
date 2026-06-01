@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Poche;
 use App\Models\BloodAlert;
+use App\Models\Donor;
+use App\Models\User; 
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use App\Models\Donor;
 
 class AdminController extends Controller
 {
@@ -108,6 +109,47 @@ class AdminController extends Controller
         return response()->json([
             'message' => 'Alerte publiée avec succès.',
             'alert'   => $alert,
+        ], 201);
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // GET /api/admin/agents -> Lister tous les agents hospitaliers
+    // ─────────────────────────────────────────────────────────────
+    public function getAgents()
+    {
+        // On récupère uniquement les utilisateurs qui ont le rôle 'agent'
+        $agents = User::where('role', 'agent')
+                      ->orderBy('created_at', 'desc')
+                      ->get(['id', 'name', 'matricule', 'created_at']);
+
+        return response()->json($agents);
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // POST /api/admin/agents -> Créer un nouvel agent
+    // ─────────────────────────────────────────────────────────────
+    public function storeAgent(Request $request)
+    {
+        $request->validate([
+            'name'      => 'required|string|max:255',
+            'matricule' => 'required|string|unique:users,matricule',
+            'password'  => 'required|string|min:6',
+        ]);
+
+        $agent = User::create([
+            'name'      => $request->name,
+            'matricule' => $request->matricule,
+            'password'  => $request->password, // Haché automatiquement grâce au cast du modèle User
+            'role'      => 'agent',
+        ]);
+
+        return response()->json([
+            'message' => 'Compte Agent créé avec succès !',
+            'agent'   => [
+                'id'        => $agent->id,
+                'name'      => $agent->name,
+                'matricule' => $agent->matricule,
+            ]
         ], 201);
     }
 }
