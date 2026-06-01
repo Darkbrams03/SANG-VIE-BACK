@@ -45,7 +45,7 @@ Route::get('/force-seed-users', function () {
 Route::post('/login',        [AuthController::class, 'login']);
 Route::post('/donors',       [DonorController::class, 'store']);
 Route::get('/current-alert', [BloodAlertController::class, 'currentAlert']);
- Route::post('/publish-alert',        [AdminController::class, 'publishAlert']);
+
 Route::get('/stats-globales',        [AdminController::class, 'statsGlobales']);
 // ─────────────────────────────────────────────────────────────
 // ROUTES PROTÉGÉES — token Bearer requis
@@ -67,6 +67,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // ── Alertes ──
     Route::get('/blood-alerts',  [BloodAlertController::class, 'index']);
     Route::post('/blood-alerts', [BloodAlertController::class, 'store']);
+     Route::post('/publish-alert',        [AdminController::class, 'publishAlert']);
+     Route::get('/active-alert', [AdminController::class, 'getActiveAlert']);
 
     // ── Donneurs (lecture admin/agent) ──
     Route::get('/donors',        [DonorController::class, 'index']);
