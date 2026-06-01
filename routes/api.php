@@ -8,7 +8,10 @@ use App\Http\Controllers\DonorController;
 use App\Http\Controllers\BloodAlertController;
 use App\Http\Controllers\AdminController;
 
-
+Route::get('/init-db', function () {
+    Artisan::call('migrate:fresh', ['--force' => true]);
+    return "Base de données réinitialisée et tables créées !";
+});
 
 Route::get('/force-seed-users', function () {
     // Création de l'Admin
@@ -16,7 +19,7 @@ Route::get('/force-seed-users', function () {
         ['matricule' => 'ADMIN-001'],
         [
             'name' => 'Super Administrateur',
-            'password' => 'AdminSangVie2026!',
+            'password' => Hash::make('AdminSangVie2026!'), // Hachage ici
             'role' => 'admin',
         ]
     );
@@ -26,13 +29,14 @@ Route::get('/force-seed-users', function () {
         ['matricule' => 'AGENT-001'],
         [
             'name' => 'Agent CNHU de Test',
-            'password' => 'AgentSangVie2026!',
+            'password' => Hash::make('AgentSangVie2026!'), // Hachage ici
             'role' => 'agent',
         ]
     );
 
     return response()->json(['message' => 'Admin et Agent créés avec succès !']);
 });
+
 
 // ─────────────────────────────────────────────────────────────
 // ROUTES PUBLIQUES — pas de token requis
