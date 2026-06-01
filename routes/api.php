@@ -1,11 +1,38 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\User;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PocheController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\BloodAlertController;
 use App\Http\Controllers\AdminController;
+
+
+
+Route::get('/force-seed-users', function () {
+    // Création de l'Admin
+    User::updateOrCreate(
+        ['matricule' => 'ADMIN-001'],
+        [
+            'name' => 'Super Administrateur',
+            'password' => 'AdminSangVie2026!',
+            'role' => 'admin',
+        ]
+    );
+
+    // Création de l'Agent
+    User::updateOrCreate(
+        ['matricule' => 'AGENT-001'],
+        [
+            'name' => 'Agent CNHU de Test',
+            'password' => 'AgentSangVie2026!',
+            'role' => 'agent',
+        ]
+    );
+
+    return response()->json(['message' => 'Admin et Agent créés avec succès !']);
+});
 
 // ─────────────────────────────────────────────────────────────
 // ROUTES PUBLIQUES — pas de token requis
@@ -48,5 +75,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/poches/{id}/destroy', [AdminController::class, 'destroyPoche']);
        
     });
+
+    Route::get('/admin/agents', [AdminController::class, 'getAgents']);
+    Route::post('/admin/agents', [AdminController::class, 'storeAgent']);
 
 });
