@@ -31,6 +31,7 @@ class AdminController extends Controller
 
         return response()->json([
             'total_poches'     => Poche::where('status', 'Disponible')->count(),
+            'total_donneurs'   => Donor::count(),
             'urgences_actives' => BloodAlert::where('is_active', true)->count(),
             'poches_perimees'  => Poche::where('status', 'Disponible')
                                        ->where('date_peremption', '<=', $now->copy()->addDays(2)->toDateString())
