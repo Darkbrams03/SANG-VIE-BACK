@@ -37,52 +37,45 @@ Route::get('/force-seed-users', function () {
     return response()->json(['message' => 'Admin et Agent créés avec succès !']);
 });
 
-
 // ─────────────────────────────────────────────────────────────
-// ROUTES PUBLIQUES — pas de token requis
+// ROUTES PUBLIQUES
 // ─────────────────────────────────────────────────────────────
-
-Route::post('/login',        [AuthController::class, 'login']);
-Route::post('/donors',       [DonorController::class, 'store']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/donors', [DonorController::class, 'store']);
 Route::get('/current-alert', [BloodAlertController::class, 'currentAlert']);
+Route::get('/stats-globales', [AdminController::class, 'statsGlobales']);
 
-Route::get('/stats-globales',        [AdminController::class, 'statsGlobales']);
 // ─────────────────────────────────────────────────────────────
-// ROUTES PROTÉGÉES — token Bearer requis
+// ROUTES PROTÉGÉES
 // ─────────────────────────────────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
-
-    // ── Auth ──
     Route::post('/logout', [AuthController::class, 'logout']);
-
-    // ── Dashboard agent ──
     Route::get('/dashboard', [PocheController::class, 'getDashboardData']);
 
-    // ── Poches ──
-    Route::get('/poches',              [PocheController::class, 'index']);
-    Route::post('/poches',             [PocheController::class, 'store']);
-    Route::patch('/poches/{id}',       [PocheController::class, 'update']);
+    // Poches
+    Route::get('/poches', [PocheController::class, 'index']);
+    Route::post('/poches', [PocheController::class, 'store']);
+    Route::patch('/poches/{id}', [PocheController::class, 'update']);
     Route::post('/poches/{id}/sortie', [PocheController::class, 'handleSortie']);
 
-    // ── Alertes ──
-    Route::get('/blood-alerts',  [BloodAlertController::class, 'index']);
+    // Alertes
+    Route::get('/blood-alerts', [BloodAlertController::class, 'index']);
     Route::post('/blood-alerts', [BloodAlertController::class, 'store']);
-     Route::post('/publish-alert',        [AdminController::class, 'publishAlert']);
-     Route::get('/active-alert', [AdminController::class, 'getActiveAlert']);
 
-    // ── Donneurs (lecture admin/agent) ──
-    Route::get('/donors',        [DonorController::class, 'index']);
+    // Donneurs
+    Route::get('/donors', [DonorController::class, 'index']);
     Route::patch('/donors/{id}', [DonorController::class, 'update']);
 
-    // ── ADMIN uniquement ──
+    // ── ADMIN uniquement (Préfixe /admin) ──
     Route::prefix('admin')->group(function () {
-        
-        Route::get('/poches',                [AdminController::class, 'getPoches']);
+        Route::get('/poches', [AdminController::class, 'getPoches']);
         Route::patch('/poches/{id}/destroy', [AdminController::class, 'destroyPoche']);
-       
+        
+        // Routes pour l'Alerte Sang
+        Route::post('/publish-alert', [AdminController::class, 'publishAlert']);
+        Route::get('/active-alert', [AdminController::class, 'getActiveAlert']);
     });
 
     Route::get('/admin/agents', [AdminController::class, 'getAgents']);
     Route::post('/admin/agents', [AdminController::class, 'storeAgent']);
-
 });
